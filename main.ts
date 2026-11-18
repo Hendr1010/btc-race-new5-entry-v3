@@ -5,11 +5,11 @@
 // on a modest bounce or a small stop, then waits for the next washout.
 //
 // Rules:
-// - Flat, and the latest close sits at least 120 bps below the highest
+// - Flat, and the latest close sits at least 160 bps below the highest
 //   close of the previous 60 bars: buy with 99% of cash (full size, with
 //   1% kept back so the fill fee can never push the spend over the cash
 //   held).
-// - Holding, and the position is up 210 bps or down 70 bps from its cost:
+// - Holding, and the position is up 220 bps or down 70 bps from its cost:
 //   sell the whole position.
 // - Long only, at most one position, at most one order per bar.
 // - Every comparison is exact integer (BigInt) math on the bar closes and
@@ -17,7 +17,9 @@
 //   always answer the same. No clock, no randomness, no network, no files.
 //
 // Dev window, graded locally with the kit (grade-local, process driver):
-// net PnL +$3.96, 5 trades, max drawdown 1.65%, guardrails met.
+// net PnL +$11.13, 4 trades, max drawdown 1.48%, guardrails met.
+// Tuned on the dev window: dip 160 / take-profit 220 / stop 70 sits in
+// the middle of a broad profitable plateau (dip 150-180, TP 210-230).
 //
 // The bot speaks agent-fun/bars-replay/v1: newline-delimited JSON on
 // stdin, one reply per batch on stdout, echoing the batch seq.
@@ -26,8 +28,8 @@ import * as readline from "node:readline";
 
 const SYMBOL = "CBBTC";
 const LOOKBACK_BARS = 60;
-const DIP_BPS = 120n;
-const TAKE_PROFIT_BPS = 210n;
+const DIP_BPS = 160n;
+const TAKE_PROFIT_BPS = 220n;
 const STOP_LOSS_BPS = 70n;
 const MAX_SLIPPAGE_BPS = 300;
 const BUY_NUM = 99n;
